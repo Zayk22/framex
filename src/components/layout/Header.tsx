@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Search, User, Bell } from "lucide-react";
+import { Search, User, Bell, Menu, X } from "lucide-react";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 
 const navLinks = [
@@ -16,6 +16,7 @@ const navLinks = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Scroll detection
   useEffect(() => {
@@ -28,7 +29,6 @@ export default function Header() {
 
   // Keyboard shortcut: press "/" to open search
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // Don't trigger if user is typing in an input
     if (
       e.key === "/" &&
       document.activeElement?.tagName !== "INPUT" &&
@@ -44,6 +44,11 @@ export default function Header() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // Close mobile menu when clicking a link
+  const handleMobileLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <>
       <header
@@ -53,16 +58,18 @@ export default function Header() {
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4 lg:px-12">
-          {/* LEFT: Logo + Navigation */}
-          <div className="flex items-center gap-10">
-            <Link href="/" className="group flex items-center gap-1">
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-4 py-3 lg:px-12 lg:py-4">
+          {/* ========== LEFT: Logo + Desktop Nav ========== */}
+          <div className="flex items-center gap-6 lg:gap-10">
+            {/* FRAMEX Logo */}
+            <Link href="/" className="group flex-shrink-0">
               <span className="font-display text-heading-3 font-bold tracking-tight text-crimson-DEFAULT transition-colors duration-300 group-hover:text-crimson-dark">
                 FRAMEX
               </span>
             </Link>
 
-            <nav className="hidden items-center gap-8 md:flex">
+            {/* Desktop Navigation — hidden on mobile */}
+            <nav className="hidden items-center gap-6 lg:flex lg:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -75,8 +82,8 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* RIGHT: Actions */}
-          <div className="flex items-center gap-6">
+          {/* ========== RIGHT: Actions ========== */}
+          <div className="flex items-center gap-3 sm:gap-6">
             {/* Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -84,12 +91,12 @@ export default function Header() {
               aria-label="Search"
             >
               <Search size={20} strokeWidth={1.5} />
-              {/* Keyboard shortcut hint */}
               <kbd className="hidden rounded border border-matte-700 px-1.5 py-0.5 text-small text-matte-600 lg:inline-block">
                 /
               </kbd>
             </button>
 
+            {/* Notifications — hidden on small screens */}
             <button
               className="hidden text-matte-500 transition-colors duration-300 hover:text-white sm:block"
               aria-label="Notifications"
@@ -97,14 +104,42 @@ export default function Header() {
               <Bell size={20} strokeWidth={1.5} />
             </button>
 
+            {/* User Profile */}
             <button
               className="flex h-9 w-9 items-center justify-center rounded-full bg-matte-800 text-matte-500 transition-all duration-300 hover:bg-matte-700 hover:text-white"
               aria-label="User profile"
             >
               <User size={18} strokeWidth={1.5} />
             </button>
+
+            {/* ========== HAMBURGER MENU (Mobile Only) ========== */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-1 text-matte-500 transition-colors hover:text-white lg:hidden"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
+
+        {/* ========== MOBILE MENU DROPDOWN ========== */}
+        {isMobileMenuOpen && (
+          <nav className="border-t border-matte-800 bg-matte-black/95 backdrop-blur-md lg:hidden">
+            <div className="mx-auto max-w-screen-2xl px-4 py-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={handleMobileLinkClick}
+                  className="block py-3 text-body font-medium text-matte-300 transition-colors duration-200 hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* Search Overlay */}

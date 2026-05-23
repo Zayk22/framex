@@ -18,7 +18,7 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
 
   return (
     <motion.div
-      className="group relative flex-shrink-0 cursor-pointer"
+      className="group relative flex-shrink-0 cursor-pointer w-[150px] sm:w-[180px] lg:w-[220px]"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -29,7 +29,6 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => router.push(`/movie/${movie.id}`)}
-      style={{ width: "220px" }}
     >
       {/* ========== POSTER IMAGE ========== */}
       <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-matte-800">
@@ -51,38 +50,41 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
 
         {/* ========== HOVER OVERLAY ========== */}
         <motion.div
-          className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-matte-black/95 via-matte-black/40 to-transparent p-4"
+          className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-matte-black/95 via-matte-black/40 to-transparent p-3 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         >
           {/* Play button */}
-          <div className="mb-3 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-white/10 backdrop-blur-sm transition-transform duration-300 hover:scale-110">
-              <Play size={20} fill="white" className="ml-0.5" />
+          <div className="mb-2 sm:mb-3 flex justify-center">
+            <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border-2 border-white bg-white/10 backdrop-blur-sm transition-transform duration-300 hover:scale-110">
+              <Play size={18} fill="white" className="ml-0.5" />
             </div>
           </div>
 
           {/* Movie info on hover */}
-          <div className="space-y-1.5">
-            <h3 className="text-body font-semibold text-white line-clamp-1">
+          <div className="space-y-1 sm:space-y-1.5">
+            <h3 className="text-small sm:text-body font-semibold text-white line-clamp-1">
               {movie.title}
             </h3>
-            <div className="flex items-center gap-3 text-small text-matte-300">
+            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-small text-matte-300">
               <span className="flex items-center gap-1">
-                <Star size={12} className="text-gold-DEFAULT" fill="currentColor" />
+                <Star size={10} className="text-gold-DEFAULT" fill="currentColor" />
                 {movie.rating}
               </span>
               <span>{movie.year}</span>
               {movie.quality && (
-                <span className="rounded border border-matte-600 px-1.5 py-0.5 text-[10px] text-matte-400">
+                <span className="rounded border border-matte-600 px-1 py-0.5 text-[9px] sm:text-[10px] text-matte-400 hidden sm:inline-block">
                   {movie.quality}
                 </span>
               )}
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1 sm:gap-1.5">
               {movie.genres.slice(0, 2).map((genre) => (
-                <span key={genre} className="text-[11px] text-matte-500">
+                <span
+                  key={genre}
+                  className="text-[10px] sm:text-[11px] text-matte-500"
+                >
                   {genre}
                 </span>
               ))}
@@ -93,18 +95,18 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
 
       {/* ========== CARD INFO (Visible when not hovering) ========== */}
       <motion.div
-        className="mt-2 px-1"
+        className="mt-1.5 sm:mt-2 px-0.5 sm:px-1"
         animate={{ opacity: isHovered ? 0 : 1 }}
         transition={{ duration: 0.2 }}
       >
-        <h3 className="text-caption font-medium text-matte-300 line-clamp-1">
+        <h3 className="text-small sm:text-caption font-medium text-matte-300 line-clamp-1">
           {movie.title}
         </h3>
-        <div className="mt-0.5 flex items-center gap-2 text-small text-matte-600">
+        <div className="mt-0.5 flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-small text-matte-600">
           <span>{movie.year}</span>
           <span>•</span>
           <span className="flex items-center gap-1">
-            <Star size={10} className="text-gold-DEFAULT" fill="currentColor" />
+            <Star size={8} className="text-gold-DEFAULT" fill="currentColor" />
             {movie.rating}
           </span>
         </div>
