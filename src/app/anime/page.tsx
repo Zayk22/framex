@@ -1,20 +1,44 @@
 import { Metadata } from "next";
-import { Tv } from "lucide-react";
+import { getTrendingAnime, getPopularAnime, getTopRatedAnime } from "@/lib/jikan";
+import MovieRow from "@/components/home/MovieRow";
+import type { MovieRow as MovieRowType } from "@/types/movie";
 
 export const metadata: Metadata = {
   title: "Anime | FRAMEX",
+  description: "Explore trending, popular, and top-rated anime.",
 };
 
-export default function AnimePage() {
+export default async function AnimePage() {
+  const [trending, popular, topRated] = await Promise.all([
+    getTrendingAnime(),
+    getPopularAnime(),
+    getTopRatedAnime(),
+  ]);
+
+  const rows: MovieRowType[] = [
+    { id: "trending-anime", title: "Trending Anime", movies: trending },
+    { id: "popular-anime", title: "Popular Anime", movies: popular },
+    { id: "top-rated-anime", title: "Top Rated Anime", movies: topRated },
+  ];
+
   return (
-    <main className="flex min-h-screen items-center justify-center pt-24">
-      <div className="text-center">
-        <Tv size={48} className="mx-auto mb-4 text-matte-600" />
+    <main className="min-h-screen pt-24">
+      <div className="mx-auto max-w-screen-2xl px-6 lg:px-12 mb-8">
         <h1 className="font-display text-display text-white">Anime</h1>
-        <p className="mt-3 text-body-lg text-matte-500">
-          Anime collection coming soon.
+        <p className="mt-2 text-body-lg text-matte-500">
+          Discover trending anime, fan favorites, and critically acclaimed series.
         </p>
       </div>
+
+      {rows.map((row) => (
+        <MovieRow key={row.id} title={row.title} movies={row.movies} />
+      ))}
+
+      <section className="flex min-h-[30vh] items-center justify-center">
+        <p className="text-body-lg text-matte-600">
+          More anime categories coming soon...
+        </p>
+      </section>
     </main>
   );
 }

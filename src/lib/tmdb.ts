@@ -136,6 +136,92 @@ export async function getMovieDetails(movieId: number): Promise<Movie | null> {
     return null;
   }
 }
+// ============================================
+// TV SHOW API FUNCTIONS
+// ============================================
+
+export async function getTrendingTVShows(): Promise<Movie[]> {
+  const [page1, page2] = await Promise.all([
+    fetchFromTMDB<{ results: any[] }>("/trending/tv/week"),
+    fetchFromTMDB<{ results: any[] }>("/trending/tv/week", { page: "2" }),
+  ]);
+  
+  return [...page1.results, ...page2.results]
+    .map(transformMovie)
+    .filter((movie): movie is Movie => movie !== null)
+    .slice(0, 12);
+}
+
+export async function getPopularTVShows(): Promise<Movie[]> {
+  const [page1, page2] = await Promise.all([
+    fetchFromTMDB<{ results: any[] }>("/tv/popular"),
+    fetchFromTMDB<{ results: any[] }>("/tv/popular", { page: "2" }),
+  ]);
+  
+  return [...page1.results, ...page2.results]
+    .map(transformMovie)
+    .filter((movie): movie is Movie => movie !== null)
+    .slice(0, 12);
+}
+
+export async function getTopRatedTVShows(): Promise<Movie[]> {
+  const [page1, page2] = await Promise.all([
+    fetchFromTMDB<{ results: any[] }>("/tv/top_rated"),
+    fetchFromTMDB<{ results: any[] }>("/tv/top_rated", { page: "2" }),
+  ]);
+  
+  return [...page1.results, ...page2.results]
+    .map(transformMovie)
+    .filter((movie): movie is Movie => movie !== null)
+    .slice(0, 12);
+}
+
+// ============================================
+// KIDS/FAMILY API FUNCTIONS
+// ============================================
+
+export async function getFamilyMovies(): Promise<Movie[]> {
+  // Discover family-friendly animated movies
+  const [page1, page2] = await Promise.all([
+    fetchFromTMDB<{ results: any[] }>("/discover/movie", {
+      with_genres: "16,10751", // Animation + Family
+      "vote_count.gte": "100",
+      sort_by: "popularity.desc",
+    }),
+    fetchFromTMDB<{ results: any[] }>("/discover/movie", {
+      with_genres: "16,10751",
+      "vote_count.gte": "100",
+      sort_by: "popularity.desc",
+      page: "2",
+    }),
+  ]);
+  
+  return [...page1.results, ...page2.results]
+    .map(transformMovie)
+    .filter((movie): movie is Movie => movie !== null)
+    .slice(0, 12);
+}
+
+export async function getKidsTVShows(): Promise<Movie[]> {
+  const [page1, page2] = await Promise.all([
+    fetchFromTMDB<{ results: any[] }>("/discover/tv", {
+      with_genres: "16,10762", // Animation + Kids
+      "vote_count.gte": "50",
+      sort_by: "popularity.desc",
+    }),
+    fetchFromTMDB<{ results: any[] }>("/discover/tv", {
+      with_genres: "16,10762",
+      "vote_count.gte": "50",
+      sort_by: "popularity.desc",
+      page: "2",
+    }),
+  ]);
+  
+  return [...page1.results, ...page2.results]
+    .map(transformMovie)
+    .filter((movie): movie is Movie => movie !== null)
+    .slice(0, 12);
+}
 
 export function getImageUrl(path: string, size: "w500" | "original" = "w500"): string {
   return `${IMAGE_BASE_URL}/${size}${path}`;
