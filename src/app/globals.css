@@ -1,26 +1,84 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================
+   CUSTOM SCROLLBAR — Premium micro-interaction
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+::-webkit-scrollbar-track {
+  background: #0A0A0A; /* matte-black */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+::-webkit-scrollbar-thumb {
+  background: #333333; /* matte-700 */
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E50914; /* crimson — subtle brand moment */
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #0A0A0A;
+}
+
+/* ============================================
+   SMOOTH SCROLLING
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   TEXT SELECTION — Branded interaction
+   ============================================ */
+::selection {
+  background-color: rgba(229, 9, 20, 0.3); /* crimson with opacity */
+  color: #FFFFFF;
+}
+
+/* ============================================
+   BASE LAYER STYLES
+   ============================================ */
+@layer base {
+  * {
+    @apply border-matte-800; /* Default border color everywhere */
+  }
+
+  body {
+    @apply bg-matte-950 text-white antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1; /* Inter ligatures for polish */
+  }
+
+  /* Ensure images are block by default to avoid spacing issues */
+  img {
+    @apply block;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+@layer utilities {
+  /* Hide scrollbar while keeping scroll functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Text balance for better line wrapping on headings */
+  .text-balance {
+    text-wrap: balance;
+  }
 }
