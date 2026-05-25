@@ -1,8 +1,8 @@
 "use client";
-import { Search, User, Bell, Menu, X, Bookmark } from "lucide-react";
+
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Search, User, Bell, Menu, X } from "lucide-react";
+import { Search, User, Bell, Menu, X, Bookmark } from "lucide-react";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 
 const navLinks = [
@@ -18,7 +18,6 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -27,7 +26,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Keyboard shortcut: press "/" to open search
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (
       e.key === "/" &&
@@ -44,7 +42,6 @@ export default function Header() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  // Close mobile menu when clicking a link
   const handleMobileLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
@@ -59,16 +56,14 @@ export default function Header() {
         }`}
       >
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-4 py-3 lg:px-12 lg:py-4">
-          {/* ========== LEFT: Logo + Desktop Nav ========== */}
+          {/* LEFT: Logo + Desktop Nav */}
           <div className="flex items-center gap-6 lg:gap-10">
-            {/* FRAMEX Logo */}
             <Link href="/" className="group flex-shrink-0">
               <span className="font-display text-heading-3 font-bold tracking-tight text-crimson-DEFAULT transition-colors duration-300 group-hover:text-crimson-dark">
                 FRAMEX
               </span>
             </Link>
 
-            {/* Desktop Navigation — hidden on mobile */}
             <nav className="hidden items-center gap-6 lg:flex lg:gap-8">
               {navLinks.map((link) => (
                 <Link
@@ -82,9 +77,9 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* ========== RIGHT: Actions ========== */}
-          <div className="flex items-center gap-3 sm:gap-6">
-            {/* Search Button */}
+          {/* RIGHT: Actions */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
               className="flex items-center gap-2 text-matte-500 transition-colors duration-300 hover:text-white"
@@ -96,7 +91,16 @@ export default function Header() {
               </kbd>
             </button>
 
-            {/* Notifications — hidden on small screens */}
+            {/* Watchlist */}
+            <Link
+              href="/watchlist"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-matte-500 transition-all duration-300 hover:text-white"
+              aria-label="Watchlist"
+            >
+              <Bookmark size={18} strokeWidth={1.5} />
+            </Link>
+
+            {/* Notifications */}
             <button
               className="hidden text-matte-500 transition-colors duration-300 hover:text-white sm:block"
               aria-label="Notifications"
@@ -112,7 +116,7 @@ export default function Header() {
               <User size={18} strokeWidth={1.5} />
             </button>
 
-            {/* ========== HAMBURGER MENU (Mobile Only) ========== */}
+            {/* Hamburger Menu (Mobile) */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-1 text-matte-500 transition-colors hover:text-white lg:hidden"
@@ -123,7 +127,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ========== MOBILE MENU DROPDOWN ========== */}
+        {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
           <nav className="border-t border-matte-800 bg-matte-black/95 backdrop-blur-md lg:hidden">
             <div className="mx-auto max-w-screen-2xl px-4 py-4">
@@ -137,12 +141,18 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/watchlist"
+                onClick={handleMobileLinkClick}
+                className="block py-3 text-body font-medium text-matte-300 transition-colors duration-200 hover:text-white"
+              >
+                My Watchlist
+              </Link>
             </div>
           </nav>
         )}
       </header>
 
-      {/* Search Overlay */}
       <SearchOverlay
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -150,11 +160,3 @@ export default function Header() {
     </>
   );
 }
-{/* Watchlist */}
-<Link
-  href="/watchlist"
-  className="flex h-9 w-9 items-center justify-center rounded-full bg-matte-800 text-matte-500 transition-all duration-300 hover:bg-matte-700 hover:text-white"
-  aria-label="Watchlist"
->
-  <Bookmark size={16} strokeWidth={1.5} />
-</Link>
