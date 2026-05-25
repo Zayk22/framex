@@ -23,24 +23,15 @@ export default async function MoviesPage() {
 
   return (
     <main className="min-h-screen pt-24">
-      {/* Page Header */}
-      <div className="mx-auto max-w-screen-2xl px-6 lg:px-12 mb-8">
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12 mb-8">
         <h1 className="font-display text-display text-white">Movies</h1>
         <p className="mt-2 text-body-lg text-matte-500">
           Discover popular, top-rated, and upcoming films.
         </p>
       </div>
-
-      {/* Movie Rows */}
       {rows.map((row) => (
         <MovieRow key={row.id} title={row.title} movies={row.movies} />
       ))}
-
-      <section className="flex min-h-[30vh] items-center justify-center">
-        <p className="text-body-lg text-matte-600">
-          More categories coming soon...
-        </p>
-      </section>
     </main>
   );
 }

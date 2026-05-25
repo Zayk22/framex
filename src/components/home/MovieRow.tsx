@@ -14,7 +14,6 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
   const checkScroll = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-
     setCanScrollLeft(container.scrollLeft > 10);
     const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
     setCanScrollRight(!isAtEnd);
@@ -23,7 +22,6 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-
     container.addEventListener("scroll", checkScroll);
     checkScroll();
     return () => container.removeEventListener("scroll", checkScroll);
@@ -32,19 +30,13 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
   const scroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
     if (!container) return;
-
     const scrollAmount = container.clientWidth * 0.7;
     const targetScroll = direction === "left"
       ? container.scrollLeft - scrollAmount
       : container.scrollLeft + scrollAmount;
-
-    container.scrollTo({
-      left: targetScroll,
-      behavior: "smooth",
-    });
+    container.scrollTo({ left: targetScroll, behavior: "smooth" });
   };
 
-  // ========== LOADING SKELETON ==========
   if (isLoading) {
     return (
       <section className="py-6 sm:py-8">
@@ -63,12 +55,10 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
     );
   }
 
-  // ========== EMPTY STATE ==========
   if (!movies || movies.length === 0) {
     return null;
   }
 
-  // ========== MOVIE ROW ==========
   return (
     <section
       className="py-6 sm:py-8"
@@ -76,7 +66,6 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
       onMouseLeave={() => setIsHovering(false)}
     >
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12">
-        {/* Row Header */}
         <div className="mb-3 sm:mb-4 flex items-center justify-between">
           <h2 className="font-display text-heading-3 sm:text-heading-2 lg:text-heading-3 font-semibold text-white">
             {title}
@@ -86,9 +75,7 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
           </button>
         </div>
 
-        {/* Scrollable Container */}
         <div className="relative group/row">
-          {/* LEFT ARROW — hidden on mobile, visible on desktop hover */}
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
@@ -103,17 +90,17 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
             </button>
           )}
 
-          {/* MOVIE CARDS CONTAINER */}
           <div
             ref={scrollContainerRef}
             className="no-scrollbar flex gap-2 sm:gap-3 overflow-x-auto scroll-smooth pb-4"
           >
-            {movies.map((movie, index) => (
-              <MovieCard key={movie.id} movie={movie} index={index} />
-            ))}
+            {movies
+              .filter((movie) => movie && movie.id && movie.posterUrl)
+              .map((movie, index) => (
+                <MovieCard key={movie.id} movie={movie} index={index} />
+              ))}
           </div>
 
-          {/* RIGHT ARROW — hidden on mobile, visible on desktop hover */}
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
@@ -128,7 +115,6 @@ export default function MovieRow({ title, movies, isLoading = false }: MovieRowP
             </button>
           )}
 
-          {/* FADE EDGES */}
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-matte-950 to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-matte-950 to-transparent" />
         </div>

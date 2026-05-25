@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, Plus, Star, Calendar, Clock } from "lucide-react";
+import { Play, Star, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Movie } from "@/types/movie";
+import WatchlistButton from "@/components/movie/WatchlistButton";
 
-// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -50,15 +50,10 @@ export default function Hero({ featuredMovie }: HeroProps) {
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden">
-      {/* ========== BACKGROUND LAYER ========== */}
       <div className="absolute inset-0 z-0">
         {movie?.backdropUrl ? (
           <>
-            <img
-              src={movie.backdropUrl}
-              alt=""
-              className="h-full w-full object-cover"
-            />
+            <img src={movie.backdropUrl} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-matte-black via-matte-black/60 to-matte-950/30" />
             <div className="absolute inset-0 bg-gradient-to-r from-matte-black/90 via-matte-black/40 to-transparent" />
           </>
@@ -69,13 +64,10 @@ export default function Hero({ featuredMovie }: HeroProps) {
             <div className="absolute inset-0 bg-gradient-to-r from-matte-black/80 via-transparent to-matte-black/40" />
           </>
         )}
-
-        {/* Subtle accent glows */}
         <div className="absolute left-1/3 top-1/4 h-96 w-96 rounded-full bg-gold-DEFAULT opacity-[0.03] blur-[120px]" />
         <div className="absolute right-1/4 bottom-1/3 h-64 w-64 rounded-full bg-crimson-DEFAULT opacity-[0.04] blur-[100px]" />
       </div>
 
-      {/* ========== CONTENT LAYER ========== */}
       <motion.div
         className="relative z-10 mx-auto w-full max-w-screen-2xl px-4 sm:px-6 pt-24 lg:pt-20 lg:px-12"
         variants={containerVariants}
@@ -83,14 +75,12 @@ export default function Hero({ featuredMovie }: HeroProps) {
         animate="visible"
       >
         <div className="max-w-2xl">
-          {/* Genre Badge */}
           <motion.div variants={itemVariants}>
             <span className="inline-block rounded-full border border-gold-DEFAULT/30 bg-gold-DEFAULT/10 px-3 py-1 sm:px-4 sm:py-1.5 text-small font-medium uppercase tracking-wider text-gold-soft">
               {movie ? "Featured Movie" : "Welcome to FRAMEX"}
             </span>
           </motion.div>
 
-          {/* Title — responsive: smaller on mobile, full size on desktop */}
           <motion.h1
             variants={itemVariants}
             className="mt-4 sm:mt-6 font-display text-display lg:text-hero leading-none text-white"
@@ -98,7 +88,6 @@ export default function Hero({ featuredMovie }: HeroProps) {
             {movie ? movie.title : "The Art of Cinema"}
           </motion.h1>
 
-          {/* Description — hide on very small screens */}
           <motion.p
             variants={itemVariants}
             className="mt-4 sm:mt-6 max-w-lg text-body sm:text-body-lg leading-relaxed text-matte-300 hidden sm:block"
@@ -107,7 +96,6 @@ export default function Hero({ featuredMovie }: HeroProps) {
               "Experience storytelling at its finest. Discover award-winning films, exclusive originals, and timeless classics — all in stunning quality."}
           </motion.p>
 
-          {/* Short description for mobile */}
           <motion.p
             variants={itemVariants}
             className="mt-3 max-w-lg text-caption leading-relaxed text-matte-400 sm:hidden"
@@ -117,7 +105,6 @@ export default function Hero({ featuredMovie }: HeroProps) {
               : "Award-winning films and exclusive originals in stunning quality."}
           </motion.p>
 
-          {/* Metadata Row */}
           <motion.div
             variants={itemVariants}
             className="mt-4 sm:mt-6 flex flex-wrap items-center gap-4 sm:gap-6 text-small sm:text-caption text-matte-500"
@@ -129,14 +116,12 @@ export default function Hero({ featuredMovie }: HeroProps) {
                 <span className="text-matte-600 hidden sm:inline">Rating</span>
               </div>
             )}
-
             {movie?.year > 0 && (
               <div className="flex items-center gap-1.5">
                 <Calendar size={14} className="text-matte-600" />
                 <span>{movie.year}</span>
               </div>
             )}
-
             {movie?.quality && (
               <span className="rounded border border-matte-700 px-1.5 py-0.5 text-small text-matte-400">
                 {movie.quality}
@@ -144,7 +129,6 @@ export default function Hero({ featuredMovie }: HeroProps) {
             )}
           </motion.div>
 
-          {/* CTA Buttons — stack on mobile */}
           <motion.div
             variants={itemVariants}
             className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4"
@@ -155,29 +139,18 @@ export default function Hero({ featuredMovie }: HeroProps) {
               animate="visible"
               whileHover="hover"
               whileTap="tap"
-              onClick={() => movie && router.push(`/movie/${movie.id}`)}
+              onClick={() => movie && router.push(`/watch/${movie.id}`)}
               className="flex items-center gap-2.5 rounded-lg bg-crimson-DEFAULT px-6 sm:px-8 py-3 sm:py-3.5 text-body font-semibold text-white shadow-glow-lg transition-colors duration-300 hover:bg-crimson-dark w-full sm:w-auto justify-center"
             >
               <Play size={18} fill="currentColor" />
               Watch Now
             </motion.button>
 
-            <motion.button
-              variants={buttonVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover="hover"
-              whileTap="tap"
-              className="flex items-center gap-2.5 rounded-lg border border-matte-700 bg-matte-900/50 px-6 sm:px-8 py-3 sm:py-3.5 text-body font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-matte-600 hover:bg-matte-800/50 w-full sm:w-auto justify-center"
-            >
-              <Plus size={18} />
-              Add to Watchlist
-            </motion.button>
+            {movie && <WatchlistButton movie={movie} />}
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Bottom Fade */}
       <div className="absolute bottom-0 left-0 right-0 z-10 h-32 bg-gradient-to-t from-matte-950 to-transparent" />
     </section>
   );
