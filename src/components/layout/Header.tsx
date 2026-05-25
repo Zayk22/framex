@@ -1,5 +1,5 @@
 "use client";
-
+import { Search, User, Bell, Menu, X, Bookmark } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Search, User, Bell, Menu, X } from "lucide-react";
@@ -150,3 +150,11 @@ export default function Header() {
     </>
   );
 }
+{/* Watchlist */}
+<Link
+  href="/watchlist"
+  className="flex h-9 w-9 items-center justify-center rounded-full bg-matte-800 text-matte-500 transition-all duration-300 hover:bg-matte-700 hover:text-white"
+  aria-label="Watchlist"
+>
+  <Bookmark size={16} strokeWidth={1.5} />
+</Link>
