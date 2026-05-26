@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import "./globals.css";
 
-// Inter — Our primary font for UI, body text, and general content
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 });
 
-// Playfair Display — Reserved for cinematic headings ONLY
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -35,9 +32,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} font-sans bg-matte-950 text-white antialiased`}
       >
-        <Header />
-        {children}
-        <Footer />
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

@@ -1,3 +1,4 @@
+import ContinueWatchingRow from "@/components/home/ContinueWatchingRow";
 import Hero from "@/components/home/Hero";
 import MovieRow from "@/components/home/MovieRow";
 import {
@@ -14,7 +15,6 @@ export default async function Home() {
     getTopRatedMovies(),
   ]);
 
-  // Use the first trending movie as the featured hero movie
   const featuredMovie = trending[0] || null;
 
   const rows: MovieRowType[] = [
@@ -28,6 +28,7 @@ export default async function Home() {
       <Hero featuredMovie={featuredMovie} />
 
       <div className="relative z-20 -mt-16">
+        <ContinueWatchingRow />
         {rows.map((row) => (
           <MovieRow key={row.id} title={row.title} movies={row.movies} />
         ))}

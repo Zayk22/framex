@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getMovieDetails } from "@/lib/tmdb";
-import VideoPlayer from "@/components/movie/VideoPlayer";
+import CustomPlayer from "@/components/movie/CustomPlayer";
 
 export async function generateMetadata({
   params,
@@ -40,7 +40,7 @@ export default async function WatchPage({
 
   return (
     <main className="min-h-screen bg-matte-black">
-      <VideoPlayer movie={movie} />
+      <CustomPlayer movie={movie} />
     </main>
   );
 }
