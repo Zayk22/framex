@@ -119,7 +119,7 @@ export default function Header() {
             {/* Hamburger Menu (Mobile) */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1 text-matte-500 transition-colors hover:text-white lg:hidden"
+              className="p-2 text-matte-500 transition-colors hover:text-white lg:hidden"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
