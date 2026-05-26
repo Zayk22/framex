@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ToastProvider } from "@/components/ui/Toast";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import "./globals.css";
 
@@ -34,7 +35,9 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${playfair.variable} font-sans bg-matte-950 text-white antialiased`}
         >
-          <LayoutWrapper>{children}</LayoutWrapper>
+          <ToastProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </ToastProvider>
         </body>
       </html>
     </ClerkProvider>

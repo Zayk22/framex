@@ -14,16 +14,15 @@ export default function PageTransition({
     setIsClient(true);
   }, []);
 
-  // On server and first client render, show children without animation
   if (!isClient) {
     return <>{children}</>;
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       {children}
     </motion.div>

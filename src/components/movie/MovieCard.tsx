@@ -79,6 +79,13 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
           <span className="flex items-center gap-1"><Star size={8} className="text-gold-DEFAULT" fill="currentColor" />{movie.rating}</span>
         </div>
       </motion.div>
+      {/* Hover glow effect */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-white/0 transition-all duration-300 group-hover:ring-white/10 group-hover:shadow-glow-md"
+        animate={{ scale: isHovered ? 1.05 : 1, zIndex: isHovered ? 10 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ originY: 0.5 }}
+      />
     </motion.div>
   );
 }
