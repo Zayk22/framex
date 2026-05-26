@@ -44,12 +44,20 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
     >
       <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-matte-800">
         {!imageLoaded && <div className="absolute inset-0 z-10 animate-pulse bg-matte-800" />}
-        <img src={movie.posterUrl} alt={movie.title} className="h-full w-full object-cover"
-          onLoad={() => setImageLoaded(true)} onError={() => setImageLoaded(true)}
-          style={{ opacity: imageLoaded ? 1 : 0 }} loading="lazy" />
+        <img
+          src={movie.posterUrl}
+          alt={movie.title}
+          className="h-full w-full object-cover transition-opacity duration-500"
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(true)}
+          style={{ opacity: imageLoaded ? 1 : 0 }}
+          loading="lazy"
+          decoding="async"
+        />
         <motion.div
           className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-matte-black/95 via-matte-black/40 to-transparent p-3 sm:p-4"
-          initial={{ opacity: 0 }} animate={{ opacity: isHovered ? 1 : 0 }} transition={{ duration: 0.3 }}>
+          initial={{ opacity: 0 }} animate={{ opacity: isHovered ? 1 : 0 }} transition={{ duration: 0.3 }}
+        >
           <div className="mb-2 sm:mb-3 flex justify-center">
             <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border-2 border-white bg-white/10 backdrop-blur-sm transition-transform duration-300 hover:scale-110">
               <Play size={18} fill="white" className="ml-0.5" />
