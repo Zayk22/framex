@@ -1,3 +1,4 @@
+import AuthGate from "@/components/home/AuthGate";
 import ContinueWatchingRow from "@/components/home/ContinueWatchingRow";
 import Hero from "@/components/home/Hero";
 import MovieRow from "@/components/home/MovieRow";
@@ -25,15 +26,14 @@ export default async function Home() {
 
   return (
     <main>
+      <AuthGate />
       <Hero featuredMovie={featuredMovie} />
-
       <div className="relative z-20 -mt-16">
         <ContinueWatchingRow />
         {rows.map((row) => (
           <MovieRow key={row.id} title={row.title} movies={row.movies} />
         ))}
       </div>
-
       <section className="flex min-h-[50vh] items-center justify-center px-6">
         <p className="text-body-lg text-matte-600">
           More sections coming soon...

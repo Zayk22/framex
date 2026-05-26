@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import "./globals.css";
 
@@ -28,12 +29,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${inter.variable} ${playfair.variable} font-sans bg-matte-950 text-white antialiased`}
-      >
-        <LayoutWrapper>{children}</LayoutWrapper>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className="dark">
+        <body
+          className={`${inter.variable} ${playfair.variable} font-sans bg-matte-950 text-white antialiased`}
+        >
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
