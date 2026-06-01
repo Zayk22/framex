@@ -20,7 +20,7 @@ export default async function Home() {
 
   const rows: MovieRowType[] = [
     { id: "trending", title: "Trending Now", movies: trending },
-    { id: "popular", title: "Popular on FRAMEX", movies: popular },
+    { id: "popular", title: "Popular on Happu TV", movies: popular },
     { id: "top-rated", title: "Top Rated Films", movies: topRated },
   ];
 

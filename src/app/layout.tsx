@@ -19,10 +19,9 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "FRAMEX | Watch in Cinematic Detail",
-  description:
-    "A premium streaming experience crafted for movie lovers. Discover films, anime, and shows in stunning quality.",
-};
+  title: "Happu TV | Stream Movies & TV Shows",
+  description: "Watch your favorite movies, videos, and TV shows on Happu TV.",
+}
 
 export default function RootLayout({
   children,

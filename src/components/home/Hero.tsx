@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Movie } from "@/types/movie";
 import WatchlistButton from "@/components/movie/WatchlistButton";
 
-const containerVariants = {
+const containerVariants: any = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -14,16 +14,19 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: any = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: {
+      duration: 0.7,
+      ease: [0.25, 0.46, 0.45, 0.94],
+    },
   },
 };
 
-const buttonVariants = {
+const buttonVariants: any = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: {
     opacity: 1,
@@ -103,20 +106,20 @@ export default function Hero({ featuredMovie }: HeroProps) {
             variants={itemVariants}
             className="mt-4 sm:mt-6 flex flex-wrap items-center gap-4 sm:gap-6 text-small sm:text-caption text-matte-500"
           >
-            {movie?.rating && (
+            {movie && movie.rating && (
               <div className="flex items-center gap-1.5">
                 <Star size={14} className="text-gold-DEFAULT" fill="currentColor" />
                 <span className="font-medium text-white">{movie.rating}</span>
                 <span className="text-matte-600 hidden sm:inline">Rating</span>
               </div>
             )}
-            {movie?.year > 0 && (
+            {movie && movie.year > 0 && (
               <div className="flex items-center gap-1.5">
                 <Calendar size={14} className="text-matte-600" />
                 <span>{movie.year}</span>
               </div>
             )}
-            {movie?.quality && (
+            {movie && movie.quality && (
               <span className="rounded border border-matte-700 px-1.5 py-0.5 text-small text-matte-400">
                 {movie.quality}
               </span>

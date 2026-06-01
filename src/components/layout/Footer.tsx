@@ -11,7 +11,6 @@ const footerLinks = [
     links: [
       { label: "Movies", href: "/movies" },
       { label: "TV Shows", href: "/tv-shows" },
-      { label: "Anime", href: "/anime" },
       { label: "Kids", href: "/kids" },
       { label: "New & Popular", href: "/new" },
     ],
@@ -59,7 +58,7 @@ export default function Footer() {
           <div className="col-span-2 lg:col-span-2">
             <Link href="/" className="inline-block">
               <span className="font-display text-heading-2 font-bold tracking-tight text-white">
-                FRAMEX
+                Happu TV
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-body text-matte-500">
@@ -107,7 +106,7 @@ export default function Footer() {
         {/* ========== DIVIDER ========== */}
         <div className="mt-12 border-t border-matte-800/50 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 text-small text-matte-600 sm:flex-row">
-            <p>&copy; {currentYear} FRAMEX. All rights reserved.</p>
+            <p>&copy; {currentYear} Happu TV. All rights reserved.</p>
             <p>
               Designed with precision. Built for cinema lovers.
             </p>
