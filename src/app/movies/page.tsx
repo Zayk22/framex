@@ -16,7 +16,7 @@ export default async function MoviesPage() {
   ]);
 
   const rows: MovieRowType[] = [
-    { id: "popular", title: "Popular Movies", movies: popular },
+    { id: "popular", title: "Popular Movies on Happu TV", movies: popular },
     { id: "top-rated", title: "Top Rated", movies: topRated },
     { id: "upcoming", title: "Upcoming", movies: upcoming },
   ];

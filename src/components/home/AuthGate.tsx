@@ -50,10 +50,10 @@ export default function AuthGate() {
 
           {/* Logo */}
           <h2 className="font-display text-heading-1 text-white text-center mb-2">
-            FRAMEX
+            Happu TV
           </h2>
           <p className="text-body text-matte-400 text-center mb-8">
-            Your premium cinematic experience awaits.
+           Stream your favorite movies, videos, and TV shows.
           </p>
 
           {/* Buttons */}
