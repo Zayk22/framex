@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Movies", href: "/movies" },
   { label: "TV Shows", href: "/tv-shows" },
-  //{ label: "Anime", href: "/anime" }, // removed for hapuu TV
+  //{ label: "Anime", href: "/anime" }, // removed for Happu TV
   { label: "Kids", href: "/kids" },
 ];
 
@@ -54,10 +54,12 @@ export default function Header() {
           {/* LEFT */}
           <div className="flex items-center gap-6 lg:gap-10">
             <Link href="/" className="group flex-shrink-0">
-  <span className="font-display text-heading-3 font-bold tracking-tight text-crimson-DEFAULT transition-colors duration-300 group-hover:text-crimson-dark">
-    Happu TV
-  </span>
-</Link>
+              <img
+                src="/logo.png"
+                alt="Happu TV"
+                className="h-14 w-auto object-contain"
+              />
+            </Link>
             <nav className="hidden items-center gap-6 lg:flex lg:gap-8">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href} className="text-caption font-medium text-matte-500 transition-colors duration-300 hover:text-white">
