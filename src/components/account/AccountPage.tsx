@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useUser, useClerk, useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   User, Mail, Phone, Shield, Key, Trash2, Crown, Calendar,
-  CreditCard, ArrowRight, Check, AlertTriangle, X,
+  CreditCard, ArrowRight, Check, AlertTriangle, X, Edit3,
+  ChevronDown, ChevronUp
 } from "lucide-react";
 
 // Mock membership data (replace with real data later)
 const MOCK_MEMBERSHIP = {
   plan: "Standard Plan",
+  tier: "Standard Plan",         // Can be "Standard Plan", "Covenant Member", "Super Covenant Member"
   status: "Active",
   memberSince: "2024-01-15",
   nextBilling: "2025-01-15",
@@ -25,8 +27,13 @@ const MOCK_MEMBERSHIP = {
 export default function AccountPage() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+  const { signIn } = useSignIn();
   const router = useRouter();
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!isLoaded) {
     return (
@@ -42,12 +49,33 @@ export default function AccountPage() {
   }
 
   const handleDeleteAccount = async () => {
+    if (!signIn || !user) return;
+    setDeleteError("");
+    setIsDeleting(true);
     try {
+      // Re-authenticate with password
+      const { supportedFirstFactors } = await signIn.create({
+        identifier: user.primaryEmailAddress?.emailAddress || "",
+      });
+      const passwordFactor = supportedFirstFactors?.find(
+        (factor) => factor.strategy === "password"
+      );
+      if (!passwordFactor) throw new Error("Password authentication not available");
+
+      await signIn.attemptFirstFactor({
+        strategy: "password",
+        password: deletePassword,
+      });
+
+      // Now delete the user
       await user.delete();
       await signOut();
-      router.push("/?deleted=true");
+      router.push("/account-deleted");
     } catch (error) {
-      console.error("Failed to delete account:", error);
+      console.error(error);
+      setDeleteError("Incorrect password. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -65,8 +93,27 @@ export default function AccountPage() {
           </p>
         </motion.div>
 
+        {/* Quick Actions */}
+        <motion.div
+          className="flex flex-wrap gap-3"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.02 }}
+        >
+          <a href="#membership" className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
+            View Full Membership Details
+          </a>
+          <a href="#security" className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
+            Update Account Information
+          </a>
+          <button className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
+            Manage Subscription
+          </button>
+        </motion.div>
+
         {/* Overview Section */}
         <motion.section
+          id="overview"
           className="rounded-2xl border border-matte-800 bg-matte-900 p-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -89,18 +136,34 @@ export default function AccountPage() {
               <Mail className="h-5 w-5 text-crimson-DEFAULT" />
               <div>
                 <p className="text-caption text-matte-500">Email</p>
-                <p className="text-body text-white">
-                  {user.primaryEmailAddress?.emailAddress}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-body text-white">
+                    {user.primaryEmailAddress?.emailAddress}
+                  </p>
+                  <button
+                    onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                    className="text-caption text-crimson-DEFAULT hover:underline"
+                  >
+                    <Edit3 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-crimson-DEFAULT" />
               <div>
                 <p className="text-caption text-matte-500">Phone</p>
-                <p className="text-body text-white">
-                  {user.primaryPhoneNumber?.phoneNumber || "Not added"}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-body text-white">
+                    {user.primaryPhoneNumber?.phoneNumber || "Not added"}
+                  </p>
+                  <button
+                    onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                    className="text-caption text-crimson-DEFAULT hover:underline"
+                  >
+                    <Edit3 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -117,6 +180,7 @@ export default function AccountPage() {
 
         {/* Membership Section */}
         <motion.section
+          id="membership"
           className="rounded-2xl border border-matte-800 bg-matte-900 p-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -134,16 +198,21 @@ export default function AccountPage() {
                     {MOCK_MEMBERSHIP.plan}
                   </p>
                   <p className="text-caption text-matte-500">
-                    Status:{" "}
+                    Tier: {MOCK_MEMBERSHIP.tier} • Status:{" "}
                     <span className="text-emerald-400">
                       {MOCK_MEMBERSHIP.status}
                     </span>
                   </p>
                 </div>
               </div>
-              <button className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
-                Upgrade
-              </button>
+              <div className="flex gap-2">
+                <button className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
+                  Upgrade
+                </button>
+                <button className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800">
+                  Downgrade
+                </button>
+              </div>
             </div>
 
             <div className="border-t border-matte-800 pt-4">
@@ -187,6 +256,7 @@ export default function AccountPage() {
 
         {/* Security Settings */}
         <motion.section
+          id="security"
           className="rounded-2xl border border-matte-800 bg-matte-900 p-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -207,9 +277,7 @@ export default function AccountPage() {
                 </div>
               </div>
               <button
-                onClick={() =>
-                  user.update({ password: "" }) // Opens Clerk's password update UI
-                }
+                onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
                 className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800"
               >
                 Change Password
@@ -229,10 +297,7 @@ export default function AccountPage() {
                 </div>
               </div>
               <button
-                onClick={() => {
-                  // Clerk provides a user profile page with MFA settings
-                  window.location.href = "/user/profile";
-                }}
+                onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
                 className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800"
               >
                 {user.twoFactorEnabled ? "Manage" : "Enable"}
@@ -296,8 +361,13 @@ export default function AccountPage() {
               <input
                 type="password"
                 placeholder="Your password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
                 className="w-full rounded-lg border border-matte-700 bg-matte-800 px-4 py-2 text-white placeholder:text-matte-500"
               />
+              {deleteError && (
+                <p className="text-caption text-red-400">{deleteError}</p>
+              )}
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
@@ -307,9 +377,10 @@ export default function AccountPage() {
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-caption font-semibold text-white transition-colors hover:bg-red-700"
+                  disabled={isDeleting || !deletePassword}
+                  className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-caption font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
                 >
-                  Delete My Account
+                  {isDeleting ? "Deleting..." : "Delete My Account"}
                 </button>
               </div>
             </div>
