@@ -12,6 +12,7 @@ const navLinks = [
   { label: "TV Shows", href: "/tv-shows" },
   //{ label: "Anime", href: "/anime" }, // removed for Happu TV
   { label: "Kids", href: "/kids" },
+  { label: "Account", href: "/account" },
 ];
 
 export default function Header() {
