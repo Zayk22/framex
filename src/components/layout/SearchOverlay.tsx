@@ -4,7 +4,16 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, Film } from "lucide-react";
-import type { Movie } from "@/types/movie";
+
+interface SearchResult {
+  id: string;
+  title: string;
+  posterUrl: string;
+  year: number;
+  rating: number;
+  slug: string;
+  type: string;
+}
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -13,19 +22,17 @@ interface SearchOverlayProps {
 
 export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Movie[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // Focus input when overlay opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
 
-  // Reset state when overlay closes
   useEffect(() => {
     if (!isOpen) {
       setQuery("");
@@ -33,7 +40,6 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     }
   }, [isOpen]);
 
-  // Debounced search — waits 400ms after user stops typing
   useEffect(() => {
     if (query.length < 2) {
       setResults([]);
@@ -58,7 +64,6 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Close on Escape key
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -68,9 +73,8 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     [onClose]
   );
 
-  // Navigate to movie detail
-  const handleMovieClick = (movieId: number) => {
-    router.push(`/movie/${movieId}`);
+  const handleResultClick = (result: SearchResult) => {
+    router.push(`/title/${result.slug}`);
     onClose();
   };
 
@@ -84,7 +88,6 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Backdrop */}
           <motion.div
             className="absolute inset-0 bg-matte-black/80 backdrop-blur-md"
             onClick={onClose}
@@ -93,7 +96,6 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             exit={{ opacity: 0 }}
           />
 
-          {/* Search Panel */}
           <motion.div
             className="relative z-10 w-full max-w-2xl mx-4"
             initial={{ opacity: 0, y: -20, scale: 0.97 }}
@@ -101,7 +103,6 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             exit={{ opacity: 0, y: -20, scale: 0.97 }}
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {/* Search Input */}
             <div className="flex items-center gap-3 rounded-xl border border-matte-700 bg-matte-900 px-5 py-4 shadow-elevated">
               <Search size={20} className="text-matte-500 flex-shrink-0" />
               <input
@@ -110,7 +111,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search movies..."
+                placeholder="Search movies, videos & TV shows..."
                 className="flex-1 bg-transparent text-body text-white placeholder-matte-500 outline-none"
               />
               {query && (
@@ -123,14 +124,12 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               )}
             </div>
 
-            {/* Results Dropdown */}
             {query.length >= 2 && (
               <motion.div
                 className="mt-3 max-h-[60vh] overflow-y-auto rounded-xl border border-matte-700 bg-matte-900 shadow-elevated"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                {/* Loading State */}
                 {isLoading && (
                   <div className="space-y-3 p-4">
                     {Array.from({ length: 4 }).map((_, i) => (
@@ -145,38 +144,34 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   </div>
                 )}
 
-                {/* Empty State */}
                 {!isLoading && results.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Film size={32} className="text-matte-600 mb-3" />
-                    <p className="text-body text-matte-500">No movies found</p>
+                    <p className="text-body text-matte-500">No content found</p>
                     <p className="text-caption text-matte-600 mt-1">
                       Try a different search term
                     </p>
                   </div>
                 )}
 
-                {/* Results */}
                 {!isLoading &&
-                  results.map((movie) => (
+                  results.map((result) => (
                     <button
-                      key={movie.id}
-                      onClick={() => handleMovieClick(movie.id)}
+                      key={result.id}
+                      onClick={() => handleResultClick(result)}
                       className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors duration-200 hover:bg-matte-800"
                     >
-                      {/* Poster thumbnail */}
                       <img
-                        src={movie.posterUrl}
-                        alt={movie.title}
+                        src={result.posterUrl}
+                        alt={result.title}
                         className="h-16 w-12 flex-shrink-0 rounded object-cover"
                       />
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
                         <p className="text-caption font-medium text-white truncate">
-                          {movie.title}
+                          {result.title}
                         </p>
                         <p className="text-small text-matte-500 mt-0.5">
-                          {movie.year} • ⭐ {movie.rating}
+                          {result.year} • ⭐ {result.rating}
                         </p>
                       </div>
                     </button>

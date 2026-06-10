@@ -10,9 +10,10 @@ import { useContinueWatching } from "@/hooks/useContinueWatching";
 interface MovieCardProps {
   movie: Movie;
   index?: number;
+  slug?: string; // NEW: optional slug for content items
 }
 
-export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
+export default function MovieCard({ movie, index = 0, slug }: MovieCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const router = useRouter();
@@ -35,7 +36,10 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
           rating: movie.rating,
           type: movie.type,
         });
-        if (movie.type === "anime") {
+        if (slug) {
+          // New content types use slug-based routing
+          router.push(`/title/${slug}`);
+        } else if (movie.type === "anime") {
           router.push(`/anime/${movie.id}`);
         } else {
           router.push(`/movie/${movie.id}`);

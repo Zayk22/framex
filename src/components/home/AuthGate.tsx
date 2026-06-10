@@ -13,14 +13,14 @@ export default function AuthGate() {
   useEffect(() => {
     if (!isLoaded) return;
     // Check if user has dismissed the gate before
-    const dismissed = localStorage.getItem("framex_auth_gate_dismissed");
+    const dismissed = localStorage.getItem("happutv_auth_gate_dismissed");
     if (!isSignedIn && !dismissed) {
       setShowGate(true);
     }
   }, [isSignedIn, isLoaded]);
 
   const handleGuest = () => {
-    localStorage.setItem("framex_auth_gate_dismissed", "true");
+    localStorage.setItem("happutv_auth_gate_dismissed", "true");
     setShowGate(false);
   };
 

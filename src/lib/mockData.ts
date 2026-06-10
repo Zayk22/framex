@@ -111,7 +111,7 @@ export const movieRows: MovieRow[] = [
   },
   {
     id: "popular",
-    title: "Popular on FRAMEX",
+    title: "Popular on Happu TV",
     movies: [...featuredMovies].reverse(), // Shuffle for variety
   },
   {

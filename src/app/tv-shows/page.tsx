@@ -1,44 +1,56 @@
 import { Metadata } from "next";
-import { getTrendingTVShows, getPopularTVShows, getTopRatedTVShows } from "@/lib/tmdb";
-import MovieRow from "@/components/home/MovieRow";
-import type { MovieRow as MovieRowType } from "@/types/movie";
+import { getContent } from "@/lib/contentData";
+import MovieCard from "@/components/movie/MovieCard";
+import type { ContentItem } from "@/types/content";
 
 export const metadata: Metadata = {
-  title: "TV Shows | FRAMEX",
-  description: "Discover trending, popular, and top-rated TV shows.",
+  title: "TV Shows | Happu TV",
+  description: "Browse our collection of TV shows.",
 };
 
-export default async function TVShowsPage() {
-  const [trending, popular, topRated] = await Promise.all([
-    getTrendingTVShows(),
-    getPopularTVShows(),
-    getTopRatedTVShows(),
-  ]);
+function toMovie(item: ContentItem) {
+  return {
+    id: Number(item.id),
+    title: item.title,
+    posterUrl: item.posterUrl,
+    backdropUrl: item.backdropUrl,
+    rating: item.rating ?? 0,
+    year: item.releaseDate ? new Date(item.releaseDate).getFullYear() : 0,
+    duration: item.duration,
+    genres: item.genres,
+    description: item.description,
+    quality: "HD" as const,
+    type: item.type,
+  };
+}
 
-  const rows: MovieRowType[] = [
-    { id: "trending-tv", title: "Trending TV Shows", movies: trending },
-    { id: "popular-tv", title: "Popular TV Shows", movies: popular },
-    { id: "top-rated-tv", title: "Top Rated TV Shows", movies: topRated },
-  ];
+export default async function TVShowsPage() {
+  const tvShows = await getContent("tv_show");
 
   return (
     <main className="min-h-screen pt-24">
-      <div className="mx-auto max-w-screen-2xl px-6 lg:px-12 mb-8">
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12 mb-8">
         <h1 className="font-display text-display text-white">TV Shows</h1>
         <p className="mt-2 text-body-lg text-matte-500">
-          Binge-worthy series, trending shows, and critically acclaimed TV.
+          Discover series and episodic content.
         </p>
       </div>
-
-      {rows.map((row) => (
-        <MovieRow key={row.id} title={row.title} movies={row.movies} />
-      ))}
-
-      <section className="flex min-h-[30vh] items-center justify-center">
-        <p className="text-body-lg text-matte-600">
-          More TV categories coming soon...
-        </p>
-      </section>
+      {tvShows.length > 0 ? (
+        <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-12">
+          {tvShows.map((item, index) => (
+            <MovieCard
+              key={item.id}
+              movie={toMovie(item)}
+              index={index}
+              slug={item.slug}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex min-h-[30vh] items-center justify-center">
+          <p className="text-body-lg text-matte-600">No TV shows available at the moment.</p>
+        </div>
+      )}
     </main>
   );
 }

@@ -2,9 +2,27 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Star, Calendar } from "lucide-react";
-import { getMovieDetails, getPopularMovies } from "@/lib/tmdb";
+import { getContentBySlug, getContent } from "@/lib/contentData";
 import MovieRow from "@/components/home/MovieRow";
 import WatchlistButton from "@/components/movie/WatchlistButton";
+import type { ContentItem } from "@/types/content";
+
+function toMovie(item: ContentItem) {
+  return {
+    id: Number(item.id),
+    title: item.title,
+    posterUrl: item.posterUrl,
+    backdropUrl: item.backdropUrl,
+    rating: item.rating ?? 0,
+    year: 2026,
+    duration: item.duration,
+    genres: item.genres,
+    description: item.description,
+    quality: "HD" as const,
+    type: item.type,
+    slug: item.slug,
+  };
+}
 
 export async function generateMetadata({
   params,
@@ -12,14 +30,14 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const movie = await getMovieDetails(Number(id));
+  const movie = await getContentBySlug(id);
 
   if (!movie) {
-    return { title: "Movie Not Found | FRAMEX" };
+    return { title: "Movie Not Found | Happu TV" };
   }
 
   return {
-    title: `${movie.title} | FRAMEX`,
+    title: `${movie.title} | Happu TV`,
     description: movie.description,
     openGraph: {
       title: movie.title,
@@ -35,23 +53,18 @@ export default async function MovieDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const movieId = Number(id);
 
-  if (isNaN(movieId)) {
-    notFound();
-  }
-
-  const [movie, popularMovies] = await Promise.all([
-    getMovieDetails(movieId),
-    getPopularMovies(),
+  const [movie, allMovies] = await Promise.all([
+    getContentBySlug(id),
+    getContent("movie"),
   ]);
 
   if (!movie) {
     notFound();
   }
 
-  const relatedMovies = popularMovies
-    .filter((m) => m.id !== movie.id)
+  const relatedMovies = allMovies
+    .filter((m) => m.slug !== movie.slug)
     .slice(0, 12);
 
   return (
@@ -73,11 +86,11 @@ export default async function MovieDetailPage({
 
         <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-32 lg:px-12">
           <Link
-            href="/"
+            href="/movies"
             className="mb-8 inline-flex items-center gap-2 text-caption text-matte-400 transition-colors duration-300 hover:text-white"
           >
             <ArrowLeft size={18} />
-            Back to Browse
+            Back to Movies
           </Link>
 
           <div className="max-w-2xl">
@@ -86,24 +99,23 @@ export default async function MovieDetailPage({
             </h1>
 
             <div className="mt-4 flex flex-wrap items-center gap-5 text-caption text-matte-400">
-              <div className="flex items-center gap-1.5">
-                <Star size={16} className="text-gold-DEFAULT" fill="currentColor" />
-                <span className="font-medium text-white">{movie.rating}</span>
-                <span className="text-matte-500">/ 10</span>
-              </div>
-
-              {movie.year > 0 && (
+              {movie.rating > 0 && (
                 <div className="flex items-center gap-1.5">
-                  <Calendar size={14} />
-                  <span>{movie.year}</span>
+                  <Star size={16} className="text-gold-DEFAULT" fill="currentColor" />
+                  <span className="font-medium text-white">{movie.rating}</span>
                 </div>
               )}
 
-              {movie.quality && (
-                <span className="rounded border border-matte-700 px-2 py-0.5 text-small text-matte-400">
-                  {movie.quality}
-                </span>
+              {movie.duration && (
+                <div className="flex items-center gap-1.5">
+                  <Calendar size={14} />
+                  <span>{movie.duration}</span>
+                </div>
               )}
+
+              <span className="rounded border border-matte-700 px-2 py-0.5 text-small text-matte-400 capitalize">
+                {movie.accessType}
+              </span>
 
               {movie.genres.length > 0 && (
                 <div className="flex items-center gap-2">
@@ -126,24 +138,28 @@ export default async function MovieDetailPage({
             )}
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link
-                href={`/watch/${movie.id}`}
-                className="flex items-center gap-2.5 rounded-lg bg-crimson-DEFAULT px-8 py-3.5 text-body font-semibold text-white shadow-glow-lg transition-all duration-300 hover:bg-crimson-dark"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-                Watch Now
-              </Link>
-              <WatchlistButton movie={movie} />
+              {movie.videoEmbedUrl && (
+                <Link
+                  href={`/watch/title/${movie.slug}`}
+                  className="flex items-center gap-2.5 rounded-lg bg-crimson-DEFAULT px-8 py-3.5 text-body font-semibold text-white shadow-glow-lg transition-all duration-300 hover:bg-crimson-dark"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  Watch Now
+                </Link>
+              )}
+              <WatchlistButton movie={toMovie(movie)} />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-matte-950 pb-20">
-        <MovieRow title="More Like This" movies={relatedMovies} />
-      </section>
+      {relatedMovies.length > 0 && (
+        <section className="bg-matte-950 pb-20">
+          <MovieRow title="More Like This" movies={relatedMovies.map(toMovie)} />
+        </section>
+      )}
     </main>
   );
 }

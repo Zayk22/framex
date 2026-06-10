@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { useUser, useClerk, useSignIn } from "@clerk/nextjs";
+import { UserProfile } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   User, Mail, Phone, Shield, Key, Trash2, Crown, Calendar,
-  CreditCard, ArrowRight, Check, AlertTriangle, X, Edit3,
-  ChevronDown, ChevronUp
+  CreditCard, Check, AlertTriangle, X, Edit3
 } from "lucide-react";
 
 // Mock membership data (replace with real data later)
 const MOCK_MEMBERSHIP = {
   plan: "Standard Plan",
-  tier: "Standard Plan",         // Can be "Standard Plan", "Covenant Member", "Super Covenant Member"
+  tier: "Standard Plan",          // "Standard Plan", "Covenant Member", "Super Covenant Member"
   status: "Active",
   memberSince: "2024-01-15",
   nextBilling: "2025-01-15",
@@ -34,6 +34,7 @@ export default function AccountPage() {
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   if (!isLoaded) {
     return (
@@ -141,8 +142,9 @@ export default function AccountPage() {
                     {user.primaryEmailAddress?.emailAddress}
                   </p>
                   <button
-                    onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                    onClick={() => setShowProfileModal(true)}
                     className="text-caption text-crimson-DEFAULT hover:underline"
+                    title="Edit profile details"
                   >
                     <Edit3 className="h-4 w-4" />
                   </button>
@@ -158,8 +160,9 @@ export default function AccountPage() {
                     {user.primaryPhoneNumber?.phoneNumber || "Not added"}
                   </p>
                   <button
-                    onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                    onClick={() => setShowProfileModal(true)}
                     className="text-caption text-crimson-DEFAULT hover:underline"
+                    title="Edit profile details"
                   >
                     <Edit3 className="h-4 w-4" />
                   </button>
@@ -277,7 +280,7 @@ export default function AccountPage() {
                 </div>
               </div>
               <button
-                onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                onClick={() => setShowProfileModal(true)}
                 className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800"
               >
                 Change Password
@@ -297,7 +300,7 @@ export default function AccountPage() {
                 </div>
               </div>
               <button
-                onClick={() => window.open("https://accounts.clerk.com/user", "_blank")}
+                onClick={() => setShowProfileModal(true)}
                 className="rounded-lg border border-matte-700 px-4 py-2 text-caption text-white transition-colors hover:bg-matte-800"
               >
                 {user.twoFactorEnabled ? "Manage" : "Enable"}
@@ -385,6 +388,21 @@ export default function AccountPage() {
               </div>
             </div>
           </motion.div>
+        </div>
+      )}
+
+      {/* Profile Edit Modal (Clerk UserProfile) */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="relative max-h-[90vh] overflow-auto rounded-2xl bg-matte-900 shadow-elevated">
+            <button
+              onClick={() => setShowProfileModal(false)}
+              className="absolute right-4 top-4 z-10 rounded-full bg-matte-800 p-1 text-matte-400 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <UserProfile />
+          </div>
         </div>
       )}
     </main>

@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getMovieDetails } from "@/lib/tmdb";
-import CustomPlayer from "@/components/movie/CustomPlayer";
+import { getContentBySlug } from "@/lib/contentData";
 
 export async function generateMetadata({
   params,
@@ -9,14 +8,14 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const movie = await getMovieDetails(Number(id));
+  const movie = await getContentBySlug(id);
 
   if (!movie) {
-    return { title: "Not Found | FRAMEX" };
+    return { title: "Not Found | Happu TV" };
   }
 
   return {
-    title: `Watch ${movie.title} | FRAMEX`,
+    title: `Watch ${movie.title} | Happu TV`,
   };
 }
 
@@ -26,13 +25,7 @@ export default async function WatchPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const movieId = Number(id);
-
-  if (isNaN(movieId)) {
-    notFound();
-  }
-
-  const movie = await getMovieDetails(movieId);
+  const movie = await getContentBySlug(id);
 
   if (!movie) {
     notFound();
@@ -40,7 +33,20 @@ export default async function WatchPage({
 
   return (
     <main className="min-h-screen bg-matte-black">
-      <CustomPlayer movie={movie} />
+      <div className="relative h-screen w-screen">
+        {movie.videoEmbedUrl ? (
+          <iframe
+            src={movie.videoEmbedUrl}
+            className="absolute inset-0 h-full w-full"
+            allowFullScreen
+            allow="autoplay"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-white">
+            <p>No video source available for this content.</p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

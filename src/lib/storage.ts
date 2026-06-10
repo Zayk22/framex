@@ -2,9 +2,9 @@
 // LOCAL STORAGE UTILITIES
 // ============================================
 
-const WATCHLIST_KEY = "framex_watchlist";
-const CONTINUE_WATCHING_KEY = "framex_continue_watching";
-const RECENTLY_WATCHED_KEY = "framex_recently_watched";
+const WATCHLIST_KEY = "happutv_watchlist";
+const CONTINUE_WATCHING_KEY = "happutv_continue_watching";
+const RECENTLY_WATCHED_KEY = "happutv_recently_watched";
 
 // ============================================
 // TYPES

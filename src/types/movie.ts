@@ -15,12 +15,13 @@ export interface Movie {
   description?: string;
   quality?: "4K UHD" | "HD" | "SD";
   type: "movie" | "tv" | "anime";
+  slug?: string;          // URL slug for navigation
 }
 
 // Represents a collection/row of movies
 export interface MovieRow {
   id: string;
-  title: string;          // e.g., "Trending Now", "Continue Watching"
+  title: string;
   movies: Movie[];
 }
 

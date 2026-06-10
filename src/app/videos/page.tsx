@@ -4,8 +4,8 @@ import MovieCard from "@/components/movie/MovieCard";
 import type { ContentItem } from "@/types/content";
 
 export const metadata: Metadata = {
-  title: "Movies | Happu TV",
-  description: "Browse our collection of movies.",
+  title: "Videos | Happu TV",
+  description: "Browse our collection of videos.",
 };
 
 function toMovie(item: ContentItem) {
@@ -24,20 +24,20 @@ function toMovie(item: ContentItem) {
   };
 }
 
-export default async function MoviesPage() {
-  const movies = await getContent("movie");
+export default async function VideosPage() {
+  const videos = await getContent("video");
 
   return (
     <main className="min-h-screen pt-24">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12 mb-8">
-        <h1 className="font-display text-display text-white">Movies</h1>
+        <h1 className="font-display text-display text-white">Videos</h1>
         <p className="mt-2 text-body-lg text-matte-500">
-          Explore our full movie catalog.
+          Explore our video library.
         </p>
       </div>
-      {movies.length > 0 ? (
+      {videos.length > 0 ? (
         <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-12">
-          {movies.map((item, index) => (
+          {videos.map((item, index) => (
             <MovieCard
               key={item.id}
               movie={toMovie(item)}
@@ -48,7 +48,7 @@ export default async function MoviesPage() {
         </div>
       ) : (
         <div className="flex min-h-[30vh] items-center justify-center">
-          <p className="text-body-lg text-matte-600">No movies available at the moment.</p>
+          <p className="text-body-lg text-matte-600">No videos available at the moment.</p>
         </div>
       )}
     </main>
